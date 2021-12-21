@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class CandidateRestController {
 
     @Autowired
@@ -36,12 +36,23 @@ public class CandidateRestController {
       partyRepository.save(party);
         return new ResponseEntity<Party>(party, HttpStatus.CREATED);
     }
-    // Hent en liste af alle kandidater
+
+    // Hent en liste af alle kandidater der tilhører et specifikt parti
      @GetMapping("/api/getCandidates")
-    public ResponseEntity<List<Candidate>> allCandidates() {
-        return new ResponseEntity<>(candidateRepository.findAll(), HttpStatus.OK);
+     public ResponseEntity<List<Candidate>> getCandidatesByParty() {
+        Party party = new Party();
+        return new ResponseEntity<>(candidateRepository.findCandidatesByPartyPartyId(party.getPartyId()), HttpStatus.OK);
     }
 
+    @GetMapping("/api/getAllCandidates")
+    public List<Candidate> allCandidates() {
+        return candidateRepository.findAll();
+    }
+
+    @GetMapping("/api/getAllParties")
+    public List<Party> allParties() {
+        return partyRepository.findAll();
+    }
 
     // Hent en kandidat ved hjælp af id
     @GetMapping("/api/getCandidate/{id}")
